@@ -1,3 +1,7 @@
+// Config
+import "dotenv/config";
+
+// Imports
 import express from "express";
 import { SuperfaceClient } from "@superfaceai/one-sdk";
 import dns from 'node:dns';
