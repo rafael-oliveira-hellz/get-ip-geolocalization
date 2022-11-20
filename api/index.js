@@ -70,7 +70,9 @@ app.get("/", async (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
 
-  res.json(await run(ip));
+  const IpGeolocation = await run(ip);
+
+  res.json(IpGeolocation);
 });
 
 
