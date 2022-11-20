@@ -76,14 +76,8 @@ app.get("/", async (req, res) => {
   res.json({
     status: 200,
     message: "Success",
-    data: { IpGeolocation },
+    IpGeolocation,
   });
-});
-
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => {
-  console.log("SERVER RUNNING AT PORT 3333");
 });
 
 export default app;
