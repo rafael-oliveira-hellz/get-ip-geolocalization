@@ -67,9 +67,14 @@ app.get("/", async (req, res) => {
 
   console.log(ip);
 
-  res.send(await run(ip));
+  res.end(await run(ip));
 });
 
-app.listen(3000, () => {
-  console.log("SERVER RUNNING AT PORT 3000");
+
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log("SERVER RUNNING AT PORT 3333");
 });
+
+export default app;
