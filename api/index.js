@@ -2,11 +2,11 @@
 import "dotenv/config";
 
 // Imports
-import express from "express";
 import { SuperfaceClient } from "@superfaceai/one-sdk";
-import dns from 'node:dns';
+import express from "express";
+import dns from "node:dns";
 
-dns.setDefaultResultOrder('ipv4first');
+dns.setDefaultResultOrder("ipv4first");
 
 const app = express();
 
@@ -21,15 +21,15 @@ async function run(ip) {
   // Use the profile
   const result = await profile.getUseCase("IpGeolocation").perform(
     {
-      ipAddress: ip
+      ipAddress: ip,
     },
     {
       provider: "ipdata",
       security: {
         apikey: {
-          apikey: process.env.IPDATA_KEY
-        }
-      }
+          apikey: process.env.IPDATA_KEY,
+        },
+      },
     }
   );
 
@@ -42,25 +42,26 @@ async function run(ip) {
   }
 }
 
-app.get("/api", async (req, res) => {
-
+app.get("/", async (req, res) => {
   function getIP(req) {
     const conRemoteAddress = req.connection?.remoteAddress;
     const socketRemoteAddress = req.socket?.remoteAddress;
-    const xRealIP = req.headers['x-real-ip'];
+    const xRealIP = req.headers["x-real-ip"];
     const xForwardedForIP = (() => {
-      const xForwardedFor = req.headers['x-forwarded-for'];
+      const xForwardedFor = req.headers["x-forwarded-for"];
 
       if (xForwardedFor) {
-        const ip = xForwardedFor.split(',').map(ip => ip.trim());
+        const ip = xForwardedFor.split(",").map((ip) => ip.trim());
 
         console.log("IP: ", ip);
 
         return ip[0];
       }
-    })()
+    })();
 
-    return xForwardedForIP || xRealIP || socketRemoteAddress || conRemoteAddress
+    return (
+      xForwardedForIP || xRealIP || socketRemoteAddress || conRemoteAddress
+    );
   }
 
   const ip = getIP(req);
@@ -68,13 +69,16 @@ app.get("/api", async (req, res) => {
   console.log(ip);
 
   res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
+  res.setHeader("Content-Type", "application/json");
 
   const IpGeolocation = await run(ip);
 
-  res.json(IpGeolocation);
+  res.json({
+    status: 200,
+    message: "Success",
+    data: { IpGeolocation },
+  });
 });
-
 
 const port = process.env.PORT || 3000;
 
