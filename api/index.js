@@ -42,36 +42,40 @@ async function run(ip) {
   }
 }
 
+
+function getIP(req) {
+  const conRemoteAddress = req.connection?.remoteAddress;
+  const socketRemoteAddress = req.socket?.remoteAddress;
+  const xRealIP = req.headers["x-real-ip"];
+  const xForwardedForIP = (() => {
+    const xForwardedFor = req.headers["x-forwarded-for"];
+
+    if (xForwardedFor) {
+      const ip = xForwardedFor.split(",").map((ip) => ip.trim());
+
+      console.log("IP: ", ip);
+
+      return ip[0];
+    }
+  })();
+
+  return (
+    xForwardedForIP || xRealIP || socketRemoteAddress || conRemoteAddress
+  );
+}
+
 app.get("/", async (req, res) => {
-  function getIP(req) {
-    const conRemoteAddress = req.connection?.remoteAddress;
-    const socketRemoteAddress = req.socket?.remoteAddress;
-    const xRealIP = req.headers["x-real-ip"];
-    const xForwardedForIP = (() => {
-      const xForwardedFor = req.headers["x-forwarded-for"];
-
-      if (xForwardedFor) {
-        const ip = xForwardedFor.split(",").map((ip) => ip.trim());
-
-        console.log("IP: ", ip);
-
-        return ip[0];
-      }
-    })();
-
-    return (
-      xForwardedForIP || xRealIP || socketRemoteAddress || conRemoteAddress
-    );
-  }
 
   const ip = getIP(req);
 
-  console.log(ip);
+  console.log("getIP function response: ", ip);
 
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
 
-  const IpGeolocation = await run(ip);
+  const IpGeolocation = await run(req.ip);
+
+  console.log("req.ip response: ", req.ip);
 
   res.json({
     status: 200,
