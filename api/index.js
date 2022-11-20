@@ -67,7 +67,10 @@ app.get("/", async (req, res) => {
 
   console.log(ip);
 
-  res.end(await run(ip));
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+
+  res.json(await run(ip));
 });
 
 
