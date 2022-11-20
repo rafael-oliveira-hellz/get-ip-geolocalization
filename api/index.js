@@ -42,7 +42,7 @@ async function run(ip) {
   }
 }
 
-app.get("/", async (req, res) => {
+app.get("/api", async (req, res) => {
 
   function getIP(req) {
     const conRemoteAddress = req.connection?.remoteAddress;
